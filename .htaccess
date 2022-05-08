@@ -1,0 +1,8 @@
+ErrorDocument 400 http://microworld/erreurs/400.html
+ErrorDocument 401 http://microworld/erreurs/401.html
+ErrorDocument 403 http://microworld/erreurs/403.html
+ErrorDocument 404 http://microworld/erreurs/404.html
+ErrorDocument 406 http://microworld/erreurs/406.html
+ErrorDocument 500 http://microworld/erreurs/500.html
+ErrorDocument 502 http://microworld/erreurs/502.html
+ErrorDocument 503 http://microworld/erreurs/503.html
