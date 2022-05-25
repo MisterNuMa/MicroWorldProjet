@@ -92,12 +92,13 @@
                 throw new Exception("Veuillez entrer un tag valide.");
             }
             if ($ok) {
-                $req = $this->_db->prepare('INSERT INTO produit (titre_produit, description_produit, caracteristique_produit, prix_produit, quantite_produit, photo_produit_1, photo_produit_2, photo_produit_3, id_tag, id_utilisateur) VALUES (:titreProduit, :descriptionProduit, :caracteritiqueProduit, :prixProduit, :quantiteProduit, :photoProduit1, :photoProduit2, :photoProduit3, :idTag, :idUser)');
+                $req = $this->_db->prepare('INSERT INTO produit (titre_produit, description_produit, caracteristique_produit, prix_produit, quantite_produit, quantite_produit_alerte, photo_produit_1, photo_produit_2, photo_produit_3, id_tag, id_utilisateur) VALUES (:titreProduit, :descriptionProduit, :caracteritiqueProduit, :prixProduit, :quantiteProduit, :quantiteProduitAlerte, :photoProduit1, :photoProduit2, :photoProduit3, :idTag, :idUser)');
                 $req->bindValue(':titreProduit', $produit->getTitreProduit(), PDO::PARAM_STR);
                 $req->bindValue(':descriptionProduit', $produit->getDescriptionProduit(), PDO::PARAM_STR);
                 $req->bindValue(':caracteritiqueProduit', $produit->getCaracteristiqueProduit(), PDO::PARAM_STR);
                 $req->bindValue(':prixProduit', $produit->getPrixProduit(), PDO::PARAM_STR);
                 $req->bindValue(':quantiteProduit', $produit->getQuantiteProduit(), PDO::PARAM_INT);
+                $req->bindValue(':quantiteProduitAlerte', $produit->getQuantiteProduitAlerte(), PDO::PARAM_INT);
                 $req->bindValue(':photoProduit1', $produit->getPhotoProduit1(), PDO::PARAM_STR);
                 $req->bindValue(':photoProduit2', $produit->getPhotoProduit2(), PDO::PARAM_STR);
                 $req->bindValue(':photoProduit3', $produit->getPhotoProduit3(), PDO::PARAM_STR);
@@ -105,6 +106,23 @@
                 $req->bindValue(':idUser', $produit->getIdUser(), PDO::PARAM_INT);
                 $req->execute();
             }
+        }
+
+        // Afficher les produits les plus vendus
+        public function getProduitsPlusVendu() {
+            $produitVendu = $this->_db->query('SELECT id_produit FROM acheter GROUP BY id_produit ORDER BY SUM(quantite_acheter_produit) DESC LIMIT 5');
+            $result = array();
+            foreach ($produitVendu as $id) {
+                array_push($result, $this->getProduitById($id['id_produit']));
+            }
+            return $result;
+        }
+
+        public function getProduitById($id) {
+            $req = $this->_db->prepare('SELECT * FROM produit, utilisateur, tag WHERE produit.id_utilisateur = utilisateur.id_utilisateur AND produit.id_tag = tag.id_tag AND tag.active_tag = 1 AND active_produit = 1 AND id_produit = :id');
+            $req->bindValue(':id', $id, PDO::PARAM_INT);
+            $req->execute();
+            return $req->fetchAll(PDO::FETCH_ASSOC);
         }
 
         // Afficher les produits
@@ -138,9 +156,22 @@
             return $req->fetchAll(PDO::FETCH_ASSOC);
         }
 
+        // Afficher les produits en fonction de l'alerte
+        public function getProduitByAlert($idProduit) {
+            $req = $this->_db->prepare('SELECT * FROM produit WHERE quantite_produit <= quantite_produit_alerte AND id_produit = :idProduit');
+            $req->bindValue(':idProduit', $idProduit, PDO::PARAM_INT);
+            $req->execute();
+            return $req->fetchAll(PDO::FETCH_ASSOC);
+        }
+
         // Gestion des produits
         public function gestionProduit() {
             $req = $this->_db->query('SELECT id_produit, titre_produit, photo_produit_1, photo_produit_2, photo_produit_3, active_produit, email_utilisateur, nom_tag, quantite_produit FROM produit, utilisateur, tag WHERE produit.id_utilisateur = utilisateur.id_utilisateur AND produit.id_tag = tag.id_tag ORDER BY id_produit DESC');
+            return $req->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        public function gestionProduitAlerte() {
+            $req = $this->_db->query('SELECT id_produit, titre_produit, photo_produit_1, photo_produit_2, photo_produit_3, email_utilisateur, nom_tag, quantite_produit FROM produit, utilisateur, tag WHERE produit.id_utilisateur = utilisateur.id_utilisateur AND produit.id_tag = tag.id_tag AND quantite_produit <= quantite_produit_alerte ORDER BY id_produit DESC');
             return $req->fetchAll(PDO::FETCH_ASSOC);
         }
 
@@ -162,6 +193,14 @@
         public function deleteProduit($idProduit) {
             $req = $this->_db->prepare('DELETE FROM produit WHERE id_produit = :idProduit');
             $req->bindValue(':idProduit', $idProduit, PDO::PARAM_INT);
+            $req->execute();
+        }
+
+        //Ajout quantite produit
+        public function ajoutQuantiteProduit($idProduit, $quantite) {
+            $req = $this->_db->prepare('UPDATE produit SET quantite_produit = quantite_produit + :quantite WHERE id_produit = :idProduit');
+            $req->bindValue(':idProduit', $idProduit, PDO::PARAM_INT);
+            $req->bindValue(':quantite', $quantite, PDO::PARAM_INT);
             $req->execute();
         }
 

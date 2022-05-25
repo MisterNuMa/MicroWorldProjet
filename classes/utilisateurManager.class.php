@@ -289,6 +289,12 @@
             return $req->fetchAll(PDO::FETCH_ASSOC);
         }
 
+        // Gérer les utilisateurs qui ont fait un achat (client) il y a 6 mois ou plus
+        public function gestionUtilisateurAchat() {
+            $req = $this->_db->query('SELECT id_utilisateur, type_utilisateur, active_utilisateur, email_utilisateur FROM utilisateur, acheter WHERE utilisateur.id_utilisateur = acheter.id_utilisateur ORDER BY utilisateur.id_utilisateur DESC');
+            return $req->fetchAll(PDO::FETCH_ASSOC);
+        }
+
         // Active un utilisateur
         public function activerUtilisateur($id) {
             $this->_db->exec('UPDATE utilisateur SET active_utilisateur = 1 WHERE id_utilisateur = '.$id);

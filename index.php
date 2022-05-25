@@ -56,6 +56,52 @@
     </div>
 </div>
 
+<div class="album py-5 bg-light">
+    <div class="container px-4 px-lg-5 mt-5">
+        <h2 class="fw-bolder mb-4 text-center">Produits les plus vendus</h2>
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            <?php
+                try {
+                    $produitManager = new ProduitManager($db);
+                    $produits = $produitManager->getProduitsPlusVendu();
+                } catch (Exception $e) {
+                    echo '<script>alert('.$e->getMessage().');</script>';
+                }
+
+                foreach ($produits as $values) {
+                    foreach ($values as $value) {
+                        echo '<div class="col mb-5">
+                            <div class="card h-100">
+                                <img class="card-img-top" src="images/produits/'.htmlentities($value['photo_produit_1']).'" alt="...">
+                                <div class="card-body p-4">
+                                    <div class="text-center">
+                                        <h5 class="fw-bolder">'.$value['titre_produit'].'</h5>
+                                        '.$value['prix_produit'].' €
+                                        <br>
+                                        <small class="text-muted">'.$value['nom_tag'].'</small>
+                                    </div>
+                                </div>';
+                                if ($value['quantite_produit'] > 0) {
+                                    echo '
+                                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="acheterProduit.php?idproduit='.$value['id_produit'].'">Voir Plus</a></div>
+                                    </div>';
+                                } else {
+                                    echo '
+                                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                        <div class="text-center"><p class="user-select-none text-muted">Plus de produits disponible</p></div>
+                                    </div>';
+                                }
+                            echo '
+                            </div>
+                        </div>';
+                    }
+                }
+            ?>
+        </div>
+    </div>
+</div>
+
 <br>
 
 <?php

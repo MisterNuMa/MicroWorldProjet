@@ -82,6 +82,12 @@
             </div>
             <div class="form-group row">
                 <div class="col-md-4 mb-3">
+                    <label for="quantiteProduitAlerte" class="form-label">Quantité du produit minimum</label>
+                    <input type="number" class="form-control" id="quantiteProduitAlerte" name="quantiteProduitAlerte" placeholder="0" min="1" step="1"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-4 mb-3">
                     <label class="form-label" for="photo"><span class="text-danger">*</span> Photo du produit 1</label>
                     <input class="form-control" type="file" onchange="actuPhoto(this)" id="nomImage" name="nomImage" accept="image/jpeg, image/png" required/>
                     <div class="valid-feedback">
@@ -226,6 +232,7 @@
                         "caracteristiqueProduit" => valid_donnees($_POST["caracteristiques"]),
                         "prixProduit" => $_POST["prix"],
                         "quantiteProduit" => $_POST["quantite"],
+                        "quantiteProduitAlerte" => $_POST["quantiteProduitAlerte"],
                         "photoProduit1" => $nom_fichier,
                         "photoProduit2" => $nom_fichier_1,
                         "photoProduit3" => $nom_fichier_2,

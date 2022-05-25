@@ -5,6 +5,7 @@
         private $_caracteristiqueProduit;
         private $_prixProduit;
         private $_quantiteProduit;
+        private $_quantiteProduitAlerte;
         private $_photoProduit1;
         private $_photoProduit2;
         private $_photoProduit3;
@@ -49,6 +50,10 @@
             return $this->_quantiteProduit;
         }
 
+        public function getQuantiteProduitAlerte() {
+            return $this->_quantiteProduitAlerte;
+        }
+
         public function getPhotoProduit1() {
             return $this->_photoProduit1;
         }
@@ -88,6 +93,10 @@
 
         public function setQuantiteProduit($quantiteProduit) {
             $this->_quantiteProduit = $quantiteProduit;
+        }
+
+        public function setQuantiteProduitAlerte($quantiteProduitAlerte) {
+            $this->_quantiteProduitAlerte = $quantiteProduitAlerte;
         }
 
         public function setPhotoProduit1($photoProduit) {
